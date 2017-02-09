@@ -7,6 +7,10 @@ publish = false
 
 [dependencies]
 
+[lib]
+name = "twilight_line"
+path = "src/lib.rs"
+
 [[bin]]
 name = "tl-server"
 path = "src/bin/tl_server.rs"
