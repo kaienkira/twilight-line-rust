@@ -1,20 +1,16 @@
 [package]
-name = "twilight-line"
+name = "twilight-line-rust"
 description = "another tunnel proxy"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["kaien <kaienkira@gmail.com>"]
 publish = false
 
 [dependencies]
 
-[lib]
-name = "twilight_line"
-path = "src/lib.rs"
+[[bin]]
+name = "twilight-line-rust-client"
+path = "src/client/main.rs"
 
 [[bin]]
-name = "tl-server"
-path = "src/bin/tl_server.rs"
-
-[[bin]]
-name = "tl-client"
-path = "src/bin/tl_client.rs"
+name = "twilight-line-rust-server"
+path = "src/server/main.rs"
