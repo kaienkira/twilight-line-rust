@@ -1,4 +1,5 @@
 [package]
+edition = "2024"
 name = "twilight-line-rust"
 description = "another tunnel proxy"
 version = "1.0.0"
