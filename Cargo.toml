@@ -7,6 +7,7 @@ authors = ["kaien <kaienkira@gmail.com>"]
 publish = false
 
 [dependencies]
+tokio = { version = "1.43.0", features = ["full"] }
 
 [[bin]]
 name = "twilight-line-rust-client"
