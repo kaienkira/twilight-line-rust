@@ -21,12 +21,14 @@ fn main() {
     let cli = Cli::parse();
 
     if let Some(config_file) = cli.config_file.as_deref() {
-        let config_data = match std::fs::read_to_string(config_file) {
-            Ok(f) => f,
+        let config_data: String;
+        match std::fs::read_to_string(config_file) {
+            Ok(v) => config_data = v,
             Err(e) => {
                 eprintln!("load config file {} failed: {}", config_file, e);
                 std::process::exit(1);
             }
         };
+        print!("{}", config_data);
     }
 }
