@@ -1,23 +1,32 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
+#![allow(unused_assignments)]
 
 mod tl_client;
 
 use clap::Parser;
 use serde::Deserialize;
 
+struct Config {
+    pub local_addr: String,
+    pub server_addr: String,
+    pub sec_key: String,
+    pub fake_request: String,
+    pub fake_response: String,
+}
+
 #[derive(Parser)]
 struct Cli {
-    #[arg(short='e')]
+    #[arg(short='e', help="config file path")]
     config_file: Option<String>,
 
-    #[arg(short='l')]
+    #[arg(short='l', help="local listen addr")]
     local_addr: Option<String>,
 
-    #[arg(short='s')]
+    #[arg(short='s', help="proxy server addr")]
     server_addr: Option<String>,
 
-    #[arg(short='k')]
+    #[arg(short='k', help="cryption key")]
     sec_key: Option<String>,
 }
 
@@ -39,10 +48,12 @@ struct JsonConfig {
     fake_response: Option<Vec<String>>,
 }
 
-fn main() {
-    let opt_local_addr: Option<String> = None;
-    let opt_server_addr: Option<String> = None;
-    let opt_sec_key: Option<String> = None;
+fn parse_config() -> Config {
+    let mut opt_local_addr: Option<String> = None;
+    let mut opt_server_addr: Option<String> = None;
+    let mut opt_sec_key: Option<String> = None;
+    let mut opt_fake_request: Option<String> = None;
+    let mut opt_fake_response: Option<String> = None;
 
     let cli = Cli::parse();
 
@@ -63,5 +74,57 @@ fn main() {
                 std::process::exit(1);
             }
         }
+
+        opt_local_addr = json_config.local_addr;
+        opt_server_addr = json_config.server_addr;
+        opt_sec_key = json_config.sec_key;
+
+        if let Some(fake_request) = json_config.fake_request {
+            opt_fake_request = Some(fake_request.join(""));
+        }
+        if let Some(fake_response) = json_config.fake_response {
+            opt_fake_response = Some(fake_response.join(""));
+        }
     }
+
+    if cli.local_addr.is_some() {
+        opt_local_addr = cli.local_addr;
+    }
+    if cli.server_addr.is_some() {
+        opt_server_addr = cli.server_addr;
+    }
+    if cli.sec_key.is_some() {
+        opt_sec_key = cli.sec_key;
+    }
+
+    let mut check_opt_result = true;
+    loop {
+        if opt_local_addr.is_none() {
+            check_opt_result = false;
+            eprintln!("config.localAddr is required");
+            break;
+        }
+        if opt_server_addr.is_none() {
+            check_opt_result = false;
+            eprintln!("config.serverAddr is required");
+            break;
+        }
+        break;
+    }
+    if check_opt_result == false {
+        eprintln!("please read help with -h or --help");
+        std::process::exit(1);
+    }
+
+    Config {
+        local_addr: opt_local_addr.unwrap(),
+        server_addr: opt_server_addr.unwrap(),
+        sec_key: opt_sec_key.unwrap_or(String::new()),
+        fake_request: opt_fake_request.unwrap_or(String::new()),
+        fake_response: opt_fake_response.unwrap_or(String::new()),
+    }
+}
+
+fn main() {
+    let config = parse_config();
 }
