@@ -1,7 +1,7 @@
 .PHONY: \
 default \
+build-debug \
 build-release \
-build_debug \
 clean \
 run-client \
 run-server
