@@ -8,11 +8,11 @@ use clap::Parser;
 use serde::Deserialize;
 
 struct Config {
-    pub local_addr: String,
-    pub server_addr: String,
-    pub sec_key: String,
-    pub fake_request: String,
-    pub fake_response: String,
+    local_addr: String,
+    server_addr: String,
+    sec_key: String,
+    fake_request: String,
+    fake_response: String,
 }
 
 #[derive(Parser)]
