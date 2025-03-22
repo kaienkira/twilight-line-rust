@@ -5,7 +5,6 @@
 mod tl_client;
 
 use clap::Parser;
-use serde::Deserialize;
 
 struct Config {
     local_addr: String,
@@ -30,7 +29,7 @@ struct Cli {
     sec_key: Option<String>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde::Deserialize)]
 struct JsonConfig {
     #[serde(rename="localAddr")]
     local_addr: Option<String>,
@@ -125,6 +124,19 @@ fn parse_config() -> Config {
     }
 }
 
+fn build_tokio_runtime() -> tokio::runtime::Runtime {
+    match tokio::runtime::Builder::new_multi_thread()
+        .enable_io()
+        .build() {
+        Ok(rt) => rt,
+        Err(e) => {
+            eprintln!("build tokio runtime failed: {}", e);
+            std::process::exit(1);
+        }
+    }
+}
+
 fn main() {
     let config = parse_config();
+    let rt = build_tokio_runtime();
 }
