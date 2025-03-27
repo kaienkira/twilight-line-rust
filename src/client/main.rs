@@ -4,7 +4,7 @@
 
 mod tl_client;
 
-use clap::Parser;
+use clap::Parser as ClapParser;
 
 struct Config {
     local_addr: String,
@@ -14,7 +14,7 @@ struct Config {
     fake_response: String,
 }
 
-#[derive(Parser)]
+#[derive(ClapParser)]
 struct Cli {
     #[arg(short='e', help="config file path")]
     config_file: Option<String>,
