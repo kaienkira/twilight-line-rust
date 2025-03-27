@@ -2,6 +2,7 @@
 #![allow(unused_variables)]
 #![allow(unused_assignments)]
 
+mod proxy;
 mod tl_client;
 
 use clap::Parser as ClapParser;
@@ -139,4 +140,8 @@ fn build_tokio_runtime() -> tokio::runtime::Runtime {
 fn main() {
     let config = parse_config();
     let rt = build_tokio_runtime();
+    if let Err(e) = rt.block_on(proxy::handle_proxy(config)) {
+        eprintln!("handle proxy failed: {}", e);
+        std::process::exit(1);
+    }
 }
