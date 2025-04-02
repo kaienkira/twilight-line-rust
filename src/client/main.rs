@@ -48,7 +48,8 @@ struct JsonConfig {
     fake_response: Option<Vec<String>>,
 }
 
-fn parse_config() -> Config {
+fn parse_config() -> Config
+{
     let mut opt_local_addr: Option<String> = None;
     let mut opt_server_addr: Option<String> = None;
     let mut opt_sec_key: Option<String> = None;
@@ -125,7 +126,8 @@ fn parse_config() -> Config {
     }
 }
 
-fn build_tokio_runtime() -> tokio::runtime::Runtime {
+fn build_tokio_runtime() -> tokio::runtime::Runtime
+{
     match tokio::runtime::Builder::new_multi_thread()
         .enable_io()
         .build() {
@@ -137,8 +139,9 @@ fn build_tokio_runtime() -> tokio::runtime::Runtime {
     }
 }
 
-fn main() {
-    let config = parse_config();
+fn main()
+{
+    let config: &'static Config = Box::leak(Box::new(parse_config()));
     let rt = build_tokio_runtime();
     if let Err(e) = rt.block_on(proxy::handle_proxy(config)) {
         eprintln!("handle proxy failed: {}", e);
