@@ -140,9 +140,7 @@ fn build_tokio_runtime() -> tokio::runtime::Runtime
     }
 }
 
-static CONFIG: LazyLock<Config> = LazyLock::new(|| {
-    parse_config()
-});
+static CONFIG: LazyLock<Config> = LazyLock::new(|| { parse_config() });
 
 fn main()
 {
