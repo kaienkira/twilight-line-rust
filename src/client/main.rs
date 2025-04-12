@@ -2,11 +2,13 @@
 #![allow(unused_variables)]
 #![allow(unused_assignments)]
 
-mod proxy;
-mod tl_client;
-
 use clap::Parser as ClapParser;
 use std::sync::LazyLock;
+
+mod common;
+mod proxy;
+mod socks5_server;
+mod tl_client;
 
 struct Config {
     local_addr: String,
@@ -49,8 +51,7 @@ struct JsonConfig {
     fake_response: Option<Vec<String>>,
 }
 
-fn parse_config() -> Config
-{
+fn parse_config() -> Config {
     let mut opt_local_addr: Option<String> = None;
     let mut opt_server_addr: Option<String> = None;
     let mut opt_sec_key: Option<String> = None;
@@ -127,8 +128,7 @@ fn parse_config() -> Config
     }
 }
 
-fn build_tokio_runtime() -> tokio::runtime::Runtime
-{
+fn build_tokio_runtime() -> tokio::runtime::Runtime {
     match tokio::runtime::Builder::new_multi_thread()
         .enable_io()
         .build() {
@@ -142,8 +142,7 @@ fn build_tokio_runtime() -> tokio::runtime::Runtime
 
 static CONFIG: LazyLock<Config> = LazyLock::new(|| { parse_config() });
 
-fn main()
-{
+fn main() {
     let config = &*CONFIG;
     let rt = build_tokio_runtime();
     if let Err(e) = rt.block_on(proxy::handle_proxy(&CONFIG)) {
