@@ -6,6 +6,7 @@ mod proxy;
 mod tl_client;
 
 use clap::Parser as ClapParser;
+use std::sync::LazyLock;
 
 struct Config {
     local_addr: String,
@@ -139,11 +140,15 @@ fn build_tokio_runtime() -> tokio::runtime::Runtime
     }
 }
 
+static CONFIG: LazyLock<Config> = LazyLock::new(|| {
+    parse_config()
+});
+
 fn main()
 {
-    let config: &'static Config = Box::leak(Box::new(parse_config()));
+    let config = &*CONFIG;
     let rt = build_tokio_runtime();
-    if let Err(e) = rt.block_on(proxy::handle_proxy(config)) {
+    if let Err(e) = rt.block_on(proxy::handle_proxy(&CONFIG)) {
         eprintln!("handle proxy failed: {}", e);
         std::process::exit(1);
     }
