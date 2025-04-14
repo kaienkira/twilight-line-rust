@@ -29,6 +29,7 @@ async fn proxy(
     -> Result<()> {
     let mut s = Socks5Server::new(client_conn);
     s.method_select().await?;
+    let dst_addr = s.receive_dst_addr().await?;
 
     Ok(())
 }

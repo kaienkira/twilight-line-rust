@@ -5,6 +5,7 @@
 use clap::Parser as ClapParser;
 use std::sync::LazyLock;
 
+mod client_error;
 mod common;
 mod proxy;
 mod socks5_server;
