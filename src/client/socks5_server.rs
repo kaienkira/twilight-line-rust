@@ -60,7 +60,7 @@ impl Socks5Server {
             let mut b: Vec<u8> = vec![0; 6];
             self.conn.read_exact(&mut b).await?;
 
-            let port: u16 = (b[4] as u16) << 8 + b[5] as u16;
+            let port: u16 = ((b[4] as u16) << 8) + b[5] as u16;
             let addr = format!("{}.{}.{}.{}:{}", b[0], b[1], b[2], b[3], port);
 
             return Ok(addr);
