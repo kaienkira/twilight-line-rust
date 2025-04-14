@@ -17,7 +17,7 @@ impl Socks5Server {
     }
 
     pub async fn method_select(&mut self) -> Result<()> {
-        let mut b = Vec::with_capacity(2);
+        let mut b: Vec<u8> = vec![0; 2];
         self.conn.read_exact(&mut b).await?;
 
         let version = b[0];
@@ -29,7 +29,7 @@ impl Socks5Server {
         }
 
         // discard methods
-        let mut b = Vec::with_capacity(methods_bytes.into());
+        let mut b: Vec<u8> = vec![0; methods_bytes.into()];
         self.conn.read_exact(&mut b).await?;
 
         // answer server accepted method
@@ -39,7 +39,7 @@ impl Socks5Server {
     }
 
     pub async fn receive_dst_addr(&mut self) -> Result<String> {
-        let mut b = Vec::with_capacity(4);
+        let mut b: Vec<u8> = vec![0; 4];
         self.conn.read_exact(&mut b).await?;
 
         let version = b[0];
@@ -53,6 +53,17 @@ impl Socks5Server {
         // only support connect command
         if cmd != 0x01 {
             return Err(Box::new(ClientError::Socks5CmdNotSupported));
+        }
+
+        if addr_type == 0x01 {
+            // ipv4
+            let mut b: Vec<u8> = vec![0; 6];
+            self.conn.read_exact(&mut b).await?;
+
+            let port: u16 = (b[4] as u16) << 8 + b[5] as u16;
+            let addr = format!("{}.{}.{}.{}:{}", b[0], b[1], b[2], b[3], port);
+
+            return Ok(addr);
         }
 
         Ok(String::new())

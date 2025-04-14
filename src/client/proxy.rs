@@ -31,5 +31,7 @@ async fn proxy(
     s.method_select().await?;
     let dst_addr = s.receive_dst_addr().await?;
 
+    println!("proxy_request: [{}] => [{}]", client_addr, dst_addr);
+
     Ok(())
 }
