@@ -33,5 +33,7 @@ async fn proxy(
 
     println!("proxy_request: [{}] => [{}]", client_addr, dst_addr);
 
+    s.notify_connect_success().await?;
+
     Ok(())
 }

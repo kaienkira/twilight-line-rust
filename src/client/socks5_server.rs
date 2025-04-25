@@ -17,7 +17,9 @@ impl Socks5Server {
     }
 
     pub async fn method_select(&mut self) -> Result<()> {
-        let mut b: Vec<u8> = vec![0; 2];
+        let mut buff: Vec<u8> = vec![0; 256];
+
+        let mut b = &mut buff[..2];
         self.conn.read_exact(&mut b).await?;
 
         let version = b[0];
@@ -29,7 +31,7 @@ impl Socks5Server {
         }
 
         // discard methods
-        let mut b: Vec<u8> = vec![0; methods_bytes.into()];
+        let mut b = &mut buff[..methods_bytes.into()];
         self.conn.read_exact(&mut b).await?;
 
         // answer server accepted method
@@ -39,7 +41,9 @@ impl Socks5Server {
     }
 
     pub async fn receive_dst_addr(&mut self) -> Result<String> {
-        let mut b: Vec<u8> = vec![0; 4];
+        let mut buff: Vec<u8> = vec![0; 256];
+
+        let mut b = &mut buff[..4];
         self.conn.read_exact(&mut b).await?;
 
         let version = b[0];
@@ -57,15 +61,41 @@ impl Socks5Server {
 
         if addr_type == 0x01 {
             // ipv4
-            let mut b: Vec<u8> = vec![0; 6];
+            let mut b = &mut buff[..6];
             self.conn.read_exact(&mut b).await?;
 
             let port: u16 = ((b[4] as u16) << 8) + b[5] as u16;
             let addr = format!("{}.{}.{}.{}:{}", b[0], b[1], b[2], b[3], port);
 
             return Ok(addr);
-        }
 
-        Ok(String::new())
+        } else if addr_type == 0x03 {
+            // domain
+            let mut b = &mut buff[..1];
+            self.conn.read_exact(&mut b).await?;
+            let domain_length = b[0] as usize;
+
+            let mut b = &mut buff[..(domain_length + 2)];
+            self.conn.read_exact(&mut b).await?;
+            let domain = std::str::from_utf8(&b[..domain_length])?;
+            let port: u16 =
+                ((b[domain_length] as u16) << 8) +
+                b[domain_length + 1] as u16;
+            let addr = format!("{}:{}", domain, port);
+
+            return Ok(addr);
+
+        } else {
+            return Err(Box::new(ClientError::Socks5AddrTypeNotSupported));
+        }
+    }
+
+    pub async fn notify_connect_success(&mut self) -> Result<()> {
+        self.conn.write_all(&[
+            0x05, 0x00, 0x00, 0x01, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00
+        ]).await?;
+
+        Ok(())
     }
 }

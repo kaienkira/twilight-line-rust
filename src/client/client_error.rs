@@ -6,6 +6,7 @@ use std::fmt::Formatter;
 pub(crate) enum ClientError {
     Socks5VersionInvalid,
     Socks5CmdNotSupported,
+    Socks5AddrTypeNotSupported,
 }
 
 impl ClientError {
@@ -15,6 +16,7 @@ impl ClientError {
         match *self {
             Socks5VersionInvalid => "socks5 version invalid",
             Socks5CmdNotSupported => "socks5 cmd not supported",
+            Socks5AddrTypeNotSupported => "socks5 addr type not supported"
         }
     }
 }
