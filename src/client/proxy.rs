@@ -33,6 +33,15 @@ async fn proxy(
 
     println!("proxy_request: [{}] => [{}]", client_addr, dst_addr);
 
+    let server_conn: TcpStream;
+    match TcpStream::connect(&config.server_addr).await {
+        Ok(v) => server_conn = v,
+        Err(e) => {
+            eprintln!("connect tl-server failed: {}", e);
+            return Err(Box::new(e));
+        }
+    }
+
     s.notify_connect_success().await?;
 
     Ok(())
