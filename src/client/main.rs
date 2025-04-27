@@ -146,7 +146,7 @@ static CONFIG: LazyLock<Config> = LazyLock::new(|| { parse_config() });
 fn main() {
     let config = &*CONFIG;
     let rt = build_tokio_runtime();
-    if let Err(e) = rt.block_on(proxy::handle_proxy(&CONFIG)) {
+    if let Err(e) = rt.block_on(proxy::handle_proxy(config)) {
         eprintln!("handle proxy failed: {}", e);
         std::process::exit(1);
     }
