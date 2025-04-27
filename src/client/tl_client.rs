@@ -1,12 +1,26 @@
 use tokio::net::TcpStream;
 
-pub(crate) struct TlClient<'a> {
+pub(crate) struct TlClient {
     conn: TcpStream,
-    sec_key: &'a str,
-    fake_request_bytes: &'a [u8],
-    fake_response_bytes: &'a [u8],
+    sec_key: &'static str,
+    fake_request: &'static [u8],
+    fake_response: &'static [u8],
     comm_key: Vec<u8>,
 }
 
-impl<'a> TlClient<'a> {
+impl TlClient {
+    pub fn new(
+        conn: TcpStream,
+        sec_key: &'static str,
+        fake_request: &'static [u8],
+        fake_response: &'static [u8])
+        -> TlClient {
+        TlClient {
+            conn: conn,
+            sec_key: sec_key,
+            fake_request: fake_request,
+            fake_response: fake_response,
+            comm_key: Vec::new(),
+        }
+    }
 }

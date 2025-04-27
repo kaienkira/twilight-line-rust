@@ -5,6 +5,7 @@ use tokio::net::TcpStream;
 use crate::Config;
 use crate::common::Result;
 use crate::socks5_server::Socks5Server;
+use crate::tl_client::TlClient;
 
 pub(crate) async fn handle_proxy(config: &'static Config)
     -> Result<()> {
@@ -25,7 +26,7 @@ pub(crate) async fn handle_proxy(config: &'static Config)
 async fn proxy(
     client_conn: TcpStream,
     client_addr: SocketAddr,
-    config: &Config)
+    config: &'static Config)
     -> Result<()> {
     let mut s = Socks5Server::new(client_conn);
     s.method_select().await?;
@@ -41,6 +42,11 @@ async fn proxy(
             return Err(Box::new(e));
         }
     }
+
+    let c = TlClient::new(server_conn,
+        &config.sec_key,
+        config.fake_request.as_bytes(),
+        config.fake_response.as_bytes());
 
     s.notify_connect_success().await?;
 
