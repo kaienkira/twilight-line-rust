@@ -1,4 +1,7 @@
+use tokio::io::AsyncWriteExt;
 use tokio::net::TcpStream;
+
+use crate::common::Result;
 
 pub(crate) struct TlClient {
     conn: TcpStream,
@@ -22,5 +25,12 @@ impl TlClient {
             fake_response: fake_response,
             comm_key: Vec::new(),
         }
+    }
+
+    pub async fn connect(&mut self, dst_addr: &str) -> Result<()>
+    {
+        self.conn.write_all(self.fake_request).await?;
+
+        Ok(())
     }
 }

@@ -43,10 +43,11 @@ async fn proxy(
         }
     }
 
-    let c = TlClient::new(server_conn,
+    let mut c = TlClient::new(server_conn,
         &config.sec_key,
         config.fake_request.as_bytes(),
         config.fake_response.as_bytes());
+    c.connect(&dst_addr).await?;
 
     s.notify_connect_success().await?;
 
