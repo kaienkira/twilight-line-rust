@@ -4,7 +4,8 @@ build-debug \
 build-release \
 clean \
 run-client \
-run-server
+run-server \
+test
 
 default: build-release
 
@@ -22,3 +23,6 @@ run-client:
 
 run-server:
 	cargo run --bin twilight-line-rust-server
+
+test:
+	cargo test -- --nocapture
