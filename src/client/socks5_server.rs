@@ -2,7 +2,7 @@ use tokio::io::AsyncReadExt;
 use tokio::io::AsyncWriteExt;
 use tokio::net::TcpStream;
 
-use crate::common::Result;
+use tl_common::Result;
 use crate::client_error::ClientError;
 
 pub(crate) struct Socks5Server {

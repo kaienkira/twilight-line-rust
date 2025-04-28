@@ -2,8 +2,8 @@ use core::net::SocketAddr;
 use tokio::net::TcpListener;
 use tokio::net::TcpStream;
 
+use tl_common::Result;
 use crate::Config;
-use crate::common::Result;
 use crate::socks5_server::Socks5Server;
 use crate::tl_client::TlClient;
 

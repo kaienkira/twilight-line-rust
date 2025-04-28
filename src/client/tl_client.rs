@@ -1,7 +1,7 @@
 use tokio::io::AsyncWriteExt;
 use tokio::net::TcpStream;
 
-use crate::common::Result;
+use tl_common::Result;
 
 pub(crate) struct TlClient {
     conn: TcpStream,
