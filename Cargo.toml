@@ -1,9 +1,9 @@
 [package]
-edition = "2024"
 name = "twilight-line-rust"
 description = "another tunnel proxy"
-version = "1.0.0"
 authors = ["kaien <kaienkira@gmail.com>"]
+version = "1.0.0"
+edition = "2024"
 publish = false
 
 [dependencies]

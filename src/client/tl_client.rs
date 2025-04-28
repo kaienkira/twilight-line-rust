@@ -27,10 +27,13 @@ impl TlClient {
         }
     }
 
-    pub async fn connect(&mut self, dst_addr: &str) -> Result<()>
-    {
+    fn reset_cipher(&mut self, key: &[u8]) {
+    }
+
+    pub async fn connect(&mut self, dst_addr: &str) -> Result<()> {
         self.conn.write_all(self.fake_request).await?;
 
         Ok(())
     }
+
 }
