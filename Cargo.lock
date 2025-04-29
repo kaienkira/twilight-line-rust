@@ -519,6 +519,7 @@ name = "twilight-line-rust"
 version = "1.0.0"
 dependencies = [
  "aes",
+ "bytes",
  "cfb-mode",
  "clap",
  "hex",

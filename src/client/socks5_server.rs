@@ -17,10 +17,10 @@ impl Socks5Server {
     }
 
     pub async fn method_select(&mut self) -> Result<()> {
-        let mut buff: Vec<u8> = vec![0; 256];
+        let mut buf: Vec<u8> = vec![0; 256];
 
-        let mut b = &mut buff[..2];
-        self.conn.read_exact(&mut b).await?;
+        let b = &mut buf[..2];
+        self.conn.read_exact(b).await?;
 
         let version = b[0];
         let methods_bytes = b[1];
@@ -31,8 +31,8 @@ impl Socks5Server {
         }
 
         // discard methods
-        let mut b = &mut buff[..methods_bytes.into()];
-        self.conn.read_exact(&mut b).await?;
+        let b = &mut buf[..methods_bytes.into()];
+        self.conn.read_exact(b).await?;
 
         // answer server accepted method
         self.conn.write_all(&[0x05, 0x00]).await?;
@@ -41,10 +41,10 @@ impl Socks5Server {
     }
 
     pub async fn receive_dst_addr(&mut self) -> Result<String> {
-        let mut buff: Vec<u8> = vec![0; 256];
+        let mut buf: Vec<u8> = vec![0; 256];
 
-        let mut b = &mut buff[..4];
-        self.conn.read_exact(&mut b).await?;
+        let b = &mut buf[..4];
+        self.conn.read_exact(b).await?;
 
         let version = b[0];
         let cmd = b[1];
@@ -61,8 +61,8 @@ impl Socks5Server {
 
         if addr_type == 0x01 {
             // ipv4
-            let mut b = &mut buff[..6];
-            self.conn.read_exact(&mut b).await?;
+            let b = &mut buf[..6];
+            self.conn.read_exact(b).await?;
 
             let port: u16 = ((b[4] as u16) << 8) + b[5] as u16;
             let addr = format!("{}.{}.{}.{}:{}", b[0], b[1], b[2], b[3], port);
@@ -71,12 +71,12 @@ impl Socks5Server {
 
         } else if addr_type == 0x03 {
             // domain
-            let mut b = &mut buff[..1];
-            self.conn.read_exact(&mut b).await?;
+            let b = &mut buf[..1];
+            self.conn.read_exact(b).await?;
             let domain_length = b[0] as usize;
 
-            let mut b = &mut buff[..(domain_length + 2)];
-            self.conn.read_exact(&mut b).await?;
+            let b = &mut buf[..(domain_length + 2)];
+            self.conn.read_exact(b).await?;
             let domain = std::str::from_utf8(&b[..domain_length])?;
             let port: u16 =
                 ((b[domain_length] as u16) << 8) +
