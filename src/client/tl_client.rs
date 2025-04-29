@@ -1,11 +1,12 @@
 use cfb_mode::cipher::KeyIvInit;
+use tokio::io::AsyncReadExt;
 use tokio::io::AsyncWriteExt;
 use tokio::net::TcpStream;
 
 use tl_common::Result;
 
-type Aes256CfbEncoder = cfb_mode::Encryptor<aes::Aes256>;
-type Aes256CfbDecoder = cfb_mode::Decryptor<aes::Aes256>;
+type Aes256CfbEncoder = cfb_mode::BufEncryptor<aes::Aes256>;
+type Aes256CfbDecoder = cfb_mode::BufDecryptor<aes::Aes256>;
 
 pub(crate) struct TlClient {
     conn: TcpStream,
@@ -49,7 +50,10 @@ impl TlClient {
     }
 
     pub async fn read(&mut self, buf: &mut [u8]) -> Result<usize> {
-        Ok(0)
+        let n = self.conn.read(buf).await?;
+        self.decoder.decrypt(buf[..n]);
+
+        Ok(n)
     }
 
     pub async fn connect(&mut self, dst_addr: &str) -> Result<()> {
