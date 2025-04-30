@@ -16,6 +16,20 @@ impl Socks5Server {
         }
     }
 
+    pub async fn wait_readable(&mut self) -> Result<()> {
+        self.conn.readable().await?;
+        Ok(())
+    }
+
+    pub fn try_read(&mut self, buf: &mut [u8]) -> Result<usize> {
+        Ok(self.conn.try_read(buf)?)
+    }
+
+    pub async fn write_all(&mut self, buf: &[u8]) -> Result<()> {
+        self.conn.write_all(buf).await?;
+        Ok(())
+    }
+
     pub async fn method_select(&mut self) -> Result<()> {
         let mut buf: Vec<u8> = vec![0; 256];
 

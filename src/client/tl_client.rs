@@ -51,11 +51,21 @@ impl TlClient {
         (encoder, decoder)
     }
 
-    pub async fn read(&mut self, buf: &mut [u8]) -> Result<usize> {
-        let n = self.conn.read(buf).await?;
-        self.decoder.decrypt(&mut buf[..n]);
+    pub async fn wait_readable(&mut self) -> Result<()> {
+        self.conn.readable().await?;
+        Ok(())
+    }
 
-        Ok(n)
+    pub fn try_read(&mut self, buf: &mut [u8]) -> Result<usize> {
+        match self.conn.try_read(buf) {
+            Ok(n) => {
+                self.decoder.decrypt(&mut buf[..n]);
+                return Ok(n);
+            }
+            Err(e) => {
+                return Err(e.into());
+            }
+        }
     }
 
     pub async fn read_exact(&mut self, buf: &mut [u8]) -> Result<()> {
