@@ -1,7 +1,3 @@
-#![allow(dead_code)]
-#![allow(unused_variables)]
-#![allow(unused_assignments)]
-
 use clap::Parser as ClapParser;
 use std::sync::LazyLock;
 
