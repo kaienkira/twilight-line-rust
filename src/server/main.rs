@@ -5,6 +5,10 @@
 use clap::Parser as ClapParser;
 use std::sync::LazyLock;
 
+mod proxy;
+mod server_error;
+mod tl_server;
+
 struct Config {
     local_addr: String,
     sec_key: String,
@@ -123,4 +127,8 @@ static CONFIG: LazyLock<Config> = LazyLock::new(|| parse_config());
 fn main() {
     let config = &*CONFIG;
     let rt = build_tokio_runtime();
+    if let Err(e) = rt.block_on(proxy::handle_proxy(config)) {
+        eprintln!("handle proxy failed: {}", e);
+        std::process::exit(1);
+    }
 }
