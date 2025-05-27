@@ -10,19 +10,17 @@ pub(crate) enum ClientError {
 }
 
 impl ClientError {
-    pub fn as_str(&self) -> &'static str
-    {
+    pub fn as_str(&self) -> &'static str {
         use ClientError::*;
         match *self {
             Socks5VersionInvalid => "socks5 version invalid",
             Socks5CmdNotSupported => "socks5 cmd not supported",
-            Socks5AddrTypeNotSupported => "socks5 addr type not supported"
+            Socks5AddrTypeNotSupported => "socks5 addr type not supported",
         }
     }
 }
 
-impl Error for ClientError {
-}
+impl Error for ClientError {}
 
 impl Display for ClientError {
     fn fmt(&self, fmt: &mut Formatter<'_>) -> std::fmt::Result {

@@ -3,26 +3,22 @@ default \
 build-debug \
 build-release \
 clean \
-run-client \
-run-server \
-test
+test \
+fmt
 
 default: build-release
 
 build-debug:
-	cargo build
+	@cargo build
 
 build-release:
-	cargo build --release
+	@cargo build --release
 
 clean:
-	cargo clean
-
-run-client:
-	cargo run --bin twilight-line-rust-client
-
-run-server:
-	cargo run --bin twilight-line-rust-server
+	@cargo clean
 
 test:
-	cargo test -- --nocapture
+	@cargo test -- --nocapture
+
+fmt:
+	@cargo fmt

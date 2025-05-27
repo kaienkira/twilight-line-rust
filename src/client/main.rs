@@ -16,34 +16,34 @@ struct Config {
 
 #[derive(ClapParser)]
 struct Cli {
-    #[arg(short='e', help="config file path")]
+    #[arg(short = 'e', help = "config file path")]
     config_file: Option<String>,
 
-    #[arg(short='l', help="local listen addr")]
+    #[arg(short = 'l', help = "local listen addr")]
     local_addr: Option<String>,
 
-    #[arg(short='s', help="proxy server addr")]
+    #[arg(short = 's', help = "proxy server addr")]
     server_addr: Option<String>,
 
-    #[arg(short='k', help="cryption key")]
+    #[arg(short = 'k', help = "cryption key")]
     sec_key: Option<String>,
 }
 
 #[derive(Debug, serde::Deserialize)]
 struct JsonConfig {
-    #[serde(rename="localAddr")]
+    #[serde(rename = "localAddr")]
     local_addr: Option<String>,
 
-    #[serde(rename="serverAddr")]
+    #[serde(rename = "serverAddr")]
     server_addr: Option<String>,
 
-    #[serde(rename="secKey")]
+    #[serde(rename = "secKey")]
     sec_key: Option<String>,
 
-    #[serde(rename="fakeRequest")]
+    #[serde(rename = "fakeRequest")]
     fake_request: Option<Vec<String>>,
 
-    #[serde(rename="fakeResponse")]
+    #[serde(rename = "fakeResponse")]
     fake_response: Option<Vec<String>>,
 }
 
@@ -127,7 +127,8 @@ fn parse_config() -> Config {
 fn build_tokio_runtime() -> tokio::runtime::Runtime {
     match tokio::runtime::Builder::new_multi_thread()
         .enable_io()
-        .build() {
+        .build()
+    {
         Ok(rt) => rt,
         Err(e) => {
             eprintln!("build tokio runtime failed: {}", e);
@@ -136,7 +137,7 @@ fn build_tokio_runtime() -> tokio::runtime::Runtime {
     }
 }
 
-static CONFIG: LazyLock<Config> = LazyLock::new(|| { parse_config() });
+static CONFIG: LazyLock<Config> = LazyLock::new(|| parse_config());
 
 fn main() {
     let config = &*CONFIG;

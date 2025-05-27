@@ -24,10 +24,9 @@ impl TlClient {
         conn: TcpStream,
         sec_key: &'static str,
         fake_request: &'static [u8],
-        fake_response: &'static [u8])
-        -> TlClient {
-        let (encoder, decoder) =
-            Self::create_cipher(sec_key.as_bytes());
+        fake_response: &'static [u8],
+    ) -> TlClient {
+        let (encoder, decoder) = Self::create_cipher(sec_key.as_bytes());
 
         TlClient {
             conn: conn,
@@ -44,9 +43,13 @@ impl TlClient {
         let aes_key: Vec<u8> = tl_common::util::sha256_sum(key);
         let iv: Vec<u8> = vec![0; 16];
         let encoder = Aes256CfbEncoder::new(
-            aes_key.as_slice().into(), iv.as_slice().into());
+            aes_key.as_slice().into(),
+            iv.as_slice().into(),
+        );
         let decoder = Aes256CfbDecoder::new(
-            aes_key.as_slice().into(), iv.as_slice().into());
+            aes_key.as_slice().into(),
+            iv.as_slice().into(),
+        );
 
         (encoder, decoder)
     }
@@ -91,7 +94,8 @@ impl TlClient {
         {
             let mut buf: Vec<u8> = Vec::with_capacity(2048);
             let sign: Vec<u8> = tl_common::util::sha256_sum(
-                format!("{}{}", dst_addr, self.sec_key).as_bytes());
+                format!("{}{}", dst_addr, self.sec_key).as_bytes(),
+            );
             buf.put_u16(dst_addr.len() as u16);
             buf.put(dst_addr.as_bytes());
             buf.put(sign.as_slice());
@@ -118,8 +122,7 @@ impl TlClient {
         }
 
         // reset cipher
-        let (encoder, decoder) =
-            Self::create_cipher(self.comm_key.as_slice());
+        let (encoder, decoder) = Self::create_cipher(self.comm_key.as_slice());
         self.encoder = encoder;
         self.decoder = decoder;
 

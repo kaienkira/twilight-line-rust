@@ -2,8 +2,8 @@ use tokio::io::AsyncReadExt;
 use tokio::io::AsyncWriteExt;
 use tokio::net::TcpStream;
 
-use tl_common::Result;
 use crate::client_error::ClientError;
+use tl_common::Result;
 
 pub(crate) struct Socks5Server {
     conn: TcpStream,
@@ -11,9 +11,7 @@ pub(crate) struct Socks5Server {
 
 impl Socks5Server {
     pub fn new(conn: TcpStream) -> Socks5Server {
-        Socks5Server {
-            conn: conn,
-        }
+        Socks5Server { conn: conn }
     }
 
     pub async fn wait_readable(&mut self) -> Result<()> {
@@ -82,7 +80,6 @@ impl Socks5Server {
             let addr = format!("{}.{}.{}.{}:{}", b[0], b[1], b[2], b[3], port);
 
             return Ok(addr);
-
         } else if addr_type == 0x03 {
             // domain
             let b = &mut buf[..1];
@@ -93,22 +90,21 @@ impl Socks5Server {
             self.conn.read_exact(b).await?;
             let domain = std::str::from_utf8(&b[..domain_length])?;
             let port: u16 =
-                ((b[domain_length] as u16) << 8) +
-                b[domain_length + 1] as u16;
+                ((b[domain_length] as u16) << 8) + b[domain_length + 1] as u16;
             let addr = format!("{}:{}", domain, port);
 
             return Ok(addr);
-
         } else {
             return Err(Box::new(ClientError::Socks5AddrTypeNotSupported));
         }
     }
 
     pub async fn notify_connect_success(&mut self) -> Result<()> {
-        self.conn.write_all(&[
-            0x05, 0x00, 0x00, 0x01, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00
-        ]).await?;
+        self.conn
+            .write_all(&[
+                0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            ])
+            .await?;
 
         Ok(())
     }

@@ -2,13 +2,12 @@ use core::net::SocketAddr;
 use tokio::net::TcpListener;
 use tokio::net::TcpStream;
 
-use tl_common::Result;
 use crate::Config;
 use crate::socks5_server::Socks5Server;
 use crate::tl_client::TlClient;
+use tl_common::Result;
 
-pub(crate) async fn handle_proxy(config: &'static Config)
-    -> Result<()> {
+pub(crate) async fn handle_proxy(config: &'static Config) -> Result<()> {
     let listener = TcpListener::bind(&config.local_addr).await?;
 
     loop {
@@ -26,8 +25,8 @@ pub(crate) async fn handle_proxy(config: &'static Config)
 async fn proxy(
     client_conn: TcpStream,
     client_addr: SocketAddr,
-    config: &'static Config)
-    -> Result<()> {
+    config: &'static Config,
+) -> Result<()> {
     let mut s = Socks5Server::new(client_conn);
     s.method_select().await?;
     let dst_addr = s.receive_dst_addr().await?;
@@ -43,10 +42,12 @@ async fn proxy(
         }
     }
 
-    let mut c = TlClient::new(server_conn,
+    let mut c = TlClient::new(
+        server_conn,
         &config.sec_key,
         config.fake_request.as_bytes(),
-        config.fake_response.as_bytes());
+        config.fake_response.as_bytes(),
+    );
     c.connect(&dst_addr).await?;
 
     s.notify_connect_success().await?;
@@ -77,8 +78,8 @@ async fn proxy(
 async fn copy_data_c2s(
     c: &mut TlClient,
     s: &mut Socks5Server,
-    buf: &mut [u8])
-    -> Result<bool> {
+    buf: &mut [u8],
+) -> Result<bool> {
     loop {
         match c.try_read(buf) {
             Ok(n) => {
@@ -103,8 +104,8 @@ async fn copy_data_c2s(
 async fn copy_data_s2c(
     s: &mut Socks5Server,
     c: &mut TlClient,
-    buf: &mut [u8])
-    -> Result<bool> {
+    buf: &mut [u8],
+) -> Result<bool> {
     loop {
         match s.try_read(buf) {
             Ok(n) => {
