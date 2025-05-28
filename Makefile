@@ -2,6 +2,7 @@
 default \
 build-debug \
 build-release \
+build-windows \
 clean \
 test \
 fmt
@@ -13,6 +14,9 @@ build-debug:
 
 build-release:
 	@cargo build --release
+
+build-windows:
+	@cargo build --release --target x86_64-pc-windows-gnu
 
 clean:
 	@cargo clean
