@@ -116,7 +116,7 @@ impl TlServer {
 
         let b = &mut buf[..addr_len];
         self.read_exact(b).await?;
-        let addr = str::from_utf8(b)?.to_string();
+        let addr = String::from_utf8(b.to_vec())?;
         let sign: Vec<u8> = tl_common::util::sha256_sum(
             format!("{}{}", addr, self.sec_key).as_bytes(),
         );
