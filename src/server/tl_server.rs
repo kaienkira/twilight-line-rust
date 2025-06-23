@@ -94,6 +94,9 @@ impl TlServer {
             let mut l: usize = 0;
             loop {
                 let n = self.conn.read(&mut buf[l..]).await?;
+                if n == 0 {
+                    return Err(Box::new(ServerError::TlFakeRequestInvalid));
+                }
                 if buf[l..l + n] != self.fake_request[l..l + n] {
                     return Err(Box::new(ServerError::TlFakeRequestInvalid));
                 }
